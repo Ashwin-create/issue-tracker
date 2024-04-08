@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react'
-import { Button, Callout, TextField, Text, Spinner } from '@radix-ui/themes'
+import { Button, Callout, TextField, Text, Spinner, AlertDialog, Flex } from '@radix-ui/themes'
 import SimpleMDE from "react-simplemde-editor";
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
@@ -19,6 +19,8 @@ const NewIssuePage = () => {
   });
   const [error, setError] = useState('');
   const [isSubmitting, setSubmitting] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
 
   return (
     <div className='max-w-xl'>
@@ -26,16 +28,22 @@ const NewIssuePage = () => {
             <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       }
+      {alertMessage && (
+        <div className="absolute top-16 right-4 mt-5 mr-5 bg-green-700 text-white p-3 opacity-90">
+          {alertMessage}
+        </div>
+      )}
       <form 
         className=' space-y-3' 
         onSubmit={handleSubmit(async (data) => {
           try {
             setSubmitting(true);
             await axios.post('/api/issues', data); //send data through issues api upon submit
+            setAlertMessage('Form Submitted Sucessfully ');
             setTimeout(() => {
               setSubmitting(true);
               router.push('/issues'); //send the user back to issues page after submitting form  
-            }, 1000);
+            }, 2000);
           } catch (error) {
             setSubmitting(false);
             setError('An unexpected error occured. ')  
